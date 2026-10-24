@@ -1,158 +1,94 @@
 # WindLens — UK Wind Forecast Accuracy Dashboard
 
-WindLens is a full-stack dashboard for evaluating Great Britain's wind power forecasts against actual generation during January 2026. It is designed to help electricity-market analysts understand forecast errors and assess forecast quality before delivery.
+WindLens is a full-stack data analytics dashboard that compares UK wind generation forecasts with actual generation data for January 2026. It helps users explore forecast errors, understand model performance, and inspect hourly data.
+
+## Live Demo
+
+- **Dashboard:** https://windlens-7k4m2q.vercel.app
+- **API:** https://windlens-7k4m2q.onrender.com
+- **API Documentation:** https://windlens-7k4m2q.onrender.com/docs
 
 ## Features
 
-- Forecast-versus-actual generation time series.
-- KPI cards for Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), forecast bias, matched periods, and data coverage.
-- Largest forecast-error periods with forecast publication timestamps and lead times.
-- A historical dataset covering January 2026.
-- A configurable frontend API URL for local development and deployment.
+- Forecast versus actual wind generation analysis
+- Interactive charts and hourly data exploration
+- Forecast accuracy metrics: MAE, RMSE, and bias
+- FastAPI backend endpoints for dashboard data
+- Responsive React and TypeScript frontend
 
-## Technology Stack
+## Tech Stack
 
-**Frontend:** React, TypeScript, Vite, Recharts  
-**Backend:** Python, FastAPI, pandas, NumPy  
-**Testing:** pytest, HTTPX  
+**Frontend:** React, TypeScript, Vite, Recharts
+
+**Backend:** Python, FastAPI, pandas
+
 **Data source:** Elexon BMRS API
 
-## Project Structure
+**Deployment:** Vercel (frontend), Render (backend)
 
-```text
-windlens/
-├── backend/
-│   ├── main.py
-│   ├── download_january.py
-│   ├── analyze_january.py
-│   ├── validate_analysis.py
-│   ├── inspect_elexon.py
-│   └── requirements.txt
-├── data/
-│   ├── actuals_jan_2026.csv
-│   ├── forecasts_jan_2026.csv
-│   ├── matched_jan_2026.csv
-│   └── metrics_jan_2026.json
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.ts
-├── .gitignore
-└── README.md
-```
+## Dataset and Methodology
 
-## Data and Methodology
+The current prototype analyses January 2026 data. Forecast observations are matched with actual generation for corresponding delivery periods.
 
-The dashboard uses wind generation actuals and wind forecast records from the Elexon BMRS API.
+The analysis uses a 12-hour forecast lead-time cutoff as a prototype assumption.
 
-- **Analysis period:** 1–31 January 2026.
-- **Actual generation:** Half-hourly records aggregated into hourly averages for comparison.
-- **Forecast selection:** For each delivery hour, select the latest forecast published at least 12 hours before delivery.
-- **Cutoff assumption:** The 12-hour decision cutoff is a prototype assumption, not a claim about a specific market rule.
-- **Comparison:** Match hourly forecasts with hourly actual generation.
+The dashboard reports:
 
-Forecasts published after the selected cutoff are excluded to avoid using information that would not have been available at the assumed decision time.
+- **MAE:** Mean Absolute Error
+- **RMSE:** Root Mean Squared Error
+- **Bias:** Mean signed forecast error
 
-## Evaluation Metrics
+For this dataset, the analysis contains 744 matched hourly periods.
 
-- **MAE:** Average absolute difference between forecast and actual generation, in MW.
-- **RMSE:** Square root of the average squared forecast error, in MW.
-- **Bias:** Average forecast minus actual generation. Positive bias indicates overforecasting.
-- **Coverage:** Percentage of eligible delivery periods successfully matched.
-- **Matched periods:** Number of delivery periods included in the comparison.
+## Local Development
 
-### January 2026 Results
+### Backend
 
-Using the 12-hour cutoff assumption:
-
-| Metric | Result |
-|---|---:|
-| Matched hourly periods | 744 |
-| Coverage | 100% |
-| MAE | 1,907.18 MW |
-| RMSE | 2,384.45 MW |
-| Bias | +1,704.37 MW |
-
-These results describe forecast error under the stated selection method; they are not, by themselves, a complete electricity procurement or trading recommendation.
-
-## Local Setup
-
-### Prerequisites
-
-Install Python, Node.js with npm, and Git.
-
-### 1. Start the backend
-
-From the project root in PowerShell:
+From the project root:
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m uvicorn main:app --reload
+uvicorn main:app --reload
 ```
 
-Backend API: `http://127.0.0.1:8000`  
-Interactive API documentation: `http://127.0.0.1:8000/docs`
+The backend runs at `http://127.0.0.1:8000`.
 
-### 2. Start the frontend
+### Frontend
 
-Open a **second terminal** in VS Code:
+Open a second terminal:
 
 ```powershell
 cd frontend
 npm install
-```
-
-Create `frontend/.env.local` with:
-
-```env
-VITE_API_URL=http://127.0.0.1:8000
-```
-
-Then run:
-
-```powershell
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Set `VITE_API_URL=http://127.0.0.1:8000` in `frontend/.env.local` for local development.
 
-### 3. Build the frontend
+The frontend runs at `http://localhost:5173`.
 
-From the `frontend` directory:
+## API Endpoints
 
-```powershell
-npm run build
-```
+| Endpoint | Purpose |
+|---|---|
+| `/api/health` | Health check |
+| `/api/overview` | Summary metrics |
+| `/api/series?limit=24` | Time-series data |
+| `/api/periods?limit=24` | Matched delivery periods |
 
-## Configuration and Deployment
+## Future Improvements
 
-The frontend reads its backend URL from `VITE_API_URL`. Set this environment variable to the deployed backend URL when deploying the frontend.
+- Support configurable date ranges
+- Add forecast lead-time comparisons
+- Improve automated data updates and validation
+- Add tests for API endpoints and data-processing logic
 
-A production deployment also needs a hosted Python backend, suitable CORS settings, and access to the required data files. Update this section with the actual deployed application URL once deployment is complete.
+## Author
 
-**Live demo:** To be added  
-**Public repository:** To be added
+**Tejasv Rathore**
 
-## Testing and Validation
-
-The analysis validation script checks for duplicate delivery hours and ensures selected forecasts respect the publication cutoff.
-
-Run the validation script from the backend directory:
-
-```powershell
-python validate_analysis.py
-```
-
-If tests are added or configured, run them with:
-
-```powershell
-python -m pytest
-```
-
-## AI Tools Disclosure
-
-AI assistance was used during development for implementation guidance, debugging, documentation, and project workflow support. The project should be reviewed and understood by its author before submission.
+GitHub: https://github.com/Tejasv1910
+t for implementation guidance, debugging, documentation, and project workflow support. The project should be reviewed and understood by its author before submission.
