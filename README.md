@@ -91,4 +91,4 @@ The frontend runs at `http://localhost:5173`.
 **Tejasv Rathore**
 
 GitHub: https://github.com/Tejasv1910
-t for implementation guidance, debugging, documentation, and project workflow support. The project should be reviewed and understood by its author before submission.
+for implementation guidance, debugging, documentation, and project workflow support. The project should be reviewed and understood by its author before submission.
