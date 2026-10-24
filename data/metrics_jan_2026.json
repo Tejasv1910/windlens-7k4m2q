@@ -1,0 +1,14 @@
+{
+  "month": "2026-01",
+  "cutoff_hours": 12,
+  "hourly_actual_periods": 744,
+  "eligible_forecast_periods": 744,
+  "matched_periods": 744,
+  "coverage_percent": 100.0,
+  "mae_mw": 1907.18,
+  "rmse_mw": 2384.45,
+  "bias_mw": 1704.37,
+  "mean_lead_hours": 13.62,
+  "underforecast_hours": 96,
+  "overforecast_hours": 648
+}
